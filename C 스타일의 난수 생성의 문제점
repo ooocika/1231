@@ -1,0 +1,315 @@
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
+int main(){
+
+  srand(time(NULL));
+
+  for(int i=0; i <5; i++){
+    printf("난수:%d \n", rand() % 100);
+}
+  return 0;
+}
+//======================================
+<random>
+#include <iostream>
+#include <random>
+
+int main(){
+  std::random_device rd;
+
+  std::mt19937 gen(rd());
+
+  std::uniform_int_distribution<int> dis(0, 99);
+
+  for(int i = 0; i < 5; i++){
+    std::cout << "난수: " <<dis(gen) << std::endl;
+  }
+  
+}
+//======================================
+#include <iomanip>
+#include <iostream>
+#include<map>
+#include <random>
+
+
+
+
+int main(){
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+std::normal_distribution<double>dist(/* 평균= */ 0, /* 표준편차= */ 1);
+
+  std::map<int, int> hist{};
+
+  for(int n = 0; n < 10000; ++n){
+    ++hist[std::round(dist(gen))];
+  }
+  for(auto p : hist){
+    std::cout << std::setw(2) << p.first << ' ' << std::string(p.second/100, '*') << " "<< p.second << '\n';
+
+
+  }
+}
+
+//======================================
+#include <chrono>
+#include <iomanip>
+#include <iostream>
+#include<vector>
+#include <random>
+
+
+
+
+int main(){
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+std::uniform_int_distribution<> dist(0, 1000);
+
+  for(int total = 1; total <= 1000000; total *= 10){
+    std::vector<int> random_numbers;
+    random_numbers.reserve(total);
+
+    std::chrono::time_point<std::chrono::high_resolution_clock>
+    start = std::chrono::high_resolution_clock::now();
+
+
+
+    for(int i =0; i < total; i++){
+      random_numbers.push_back(dist(gen));
+
+    }
+    std::chrono::time_point<std::chrono::high_resolution_clock> end= std::chrono::high_resolution_clock::now();
+
+
+    auto diff = end - start;
+
+    std::cout << std::setw(7) << total
+      << "개 난수 생성시 틱 횟수 : " << diff.count() << std::endl;
+  }
+
+}
+
+//======================================
+#include <chrono>
+#include <iomanip>
+#include <iostream>
+#include<vector>
+#include <random>
+
+namespace ch = std::chrono;
+
+
+
+int main(){
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+std::uniform_int_distribution<> dist(0, 1000);
+
+  for(int total = 1; total <= 1000000; total *= 10){
+    
+    std::vector<int> random_numbers;
+    random_numbers.reserve(total);
+
+
+ch::time_point<ch::high_resolution_clock> start = 
+    ch::high_resolution_clock::now();
+    
+for(int i=0; i < total; i++){
+  random_numbers.push_back(dist(gen));
+}
+    ch::time_point<ch::high_resolution_clock> end=
+    ch::high_resolution_clock::now();
+  
+
+
+    auto diff = end - start;
+
+    std::cout << std::setw(7) << total
+      << "개 난수 생성시 걸리는 시간 : " << ch::duration_cast<ch::microseconds>(diff).count()<< "us"<< std::endl;
+  }
+
+}
+
+//======================================
+#include<chrono>
+#include<ctime>
+#include<iostream>
+#include <iomanip>
+
+int main() {
+  auto now = std::chrono::system_clock::now();
+  std::time_t t = std::chrono::system_clock::to_time_t(now);
+  std::cout << "현재 시간은 : " << std::put_time(std::localtime(&t) , 
+    "%F %T %z")
+    << '\n';
+}
+
+//======================================
+#include <filesystem>
+#include <iostream>
+int main() {
+std::filesystem::path p("./some_file");
+std::cout << "Does " << p << " exist? [" << std::boolalpha
+<< std::filesystem::exists(p) << "]" << std::endl;
+std::cout << "Is " << p << " file? [" << std::filesystem::is_regular_file(p)
+<< "]" << std::endl;
+std::cout << "Is " << p << " directory? [" << std::filesystem::is_directory(p)
+<< "]" << std::endl;
+}
+//======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+fs::path p("./some_file.txt");
+std::cout << "내 현재 경로 : " << fs::current_path() << std::endl;
+std::cout << "상대 경로 : " << p.relative_path() << std::endl;
+std::cout << "절대 경로 : " << fs::absolute(p) << std::endl;
+std::cout << "공식적인 절대 경로 : " << fs::canonical(p) << std::endl;
+}
+//======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+fs::directory_iterator itr(fs::current_path() / "a");
+while (itr != fs::end(itr)) {
+const fs::directory_entry& entry = *itr;
+std::cout << entry.path() << std::endl;
+itr++;
+}
+}
+//=======================================
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+for (const fs::directory_entry& entry :
+fs::directory_iterator(fs::current_path() / "a")) {
+std::cout << entry.path() << std::endl;
+}
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+for (const fs::directory_entry& entry :
+fs::recursive_directory_iterator(fs::current_path() / "a")) {
+std::cout << entry.path() << std::endl;
+}
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+fs::path p("./a/c");
+std::cout << "Does " << p << " exist? [" << std::boolalpha << fs::exists(p)
+<< "]" << std::endl;
+fs::create_directory(p);
+std::cout << "Does " << p << " exist? [" << fs::exists(p) << "]" << std::endl;
+std::cout << "Is " << p << " directory? [" << fs::is_directory(p) << "]"
+<< std::endl;
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+fs::path p("./c/d/e/f");
+std::cout << "Does " << p << " exist? [" << std::boolalpha << fs::exists(p)
+<< "]" << std::endl;
+fs::create_directories(p);
+std::cout << "Does " << p << " exist? [" << fs::exists(p) << "]" << std::endl;
+std::cout << "Is " << p << " directory? [" << fs::is_directory(p) << "]"
+<< std::endl;
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+
+
+namespace fs = std::filesystem;
+int main() {
+fs::path from("./a");
+fs::path to("./c");
+fs::copy(from, to, fs::copy_options::recursive);
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+
+
+int main() {
+fs::path from("./a/a.txt");
+
+fs::path to("./c");
+fs::copy(from, to);
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+
+
+int main() {
+fs::path p("./a/b.txt");
+std::cout << "Does " << p << " exist? [" << std::boolalpha
+<< std::filesystem::exists(p) << "]" << std::endl;
+fs::remove(p);
+std::cout << "Does " << p << " exist? [" << std::boolalpha
+<< std::filesystem::exists(p) << "]" << std::endl;
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+fs::path p("./c/b");
+std::error_code err;
+fs::remove(p, err); // 실패
+std::cout << err.message() << std::endl;
+fs::remove_all(p); // 성공!
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+fs::path p("./a");
+for (const auto& entry : fs::directory_iterator("./a")) {
+const std::string ext = entry.path().extension();
+if (ext == ".txt") {
+fs::remove(entry.path());
+}
+}
+}
+//=======================================
+#include <filesystem>
+#include <iostream>
+namespace fs = std::filesystem;
+int main() {
+fs::path p("./a");
+while (true) {
+bool is_modified = false;
+for (const auto& entry : fs::directory_iterator("./a")) {
+const std::string ext = entry.path().extension();
+if (ext == ".txt") {
+fs::remove(entry.path());
+is_modified = true;
+break;
+}
+}
+if (!is_modified) {
+break;
+}
+}
+}
